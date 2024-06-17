@@ -1,0 +1,14 @@
+{
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/includes"
+    ],
+    "C_Cpp.intelliSenseEngine": "default",
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "files.associations": {
+        "matrix.h": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c"
+    } // Salva automaticamente após 1 segundo de inatividade
+}
