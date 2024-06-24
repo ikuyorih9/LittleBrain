@@ -85,8 +85,8 @@ void instanciaMatrizZero(int ** matriz, int tamanho){
 int ** instaciaMatrizCSV(const char * diretorio, int tam){
     FILE * arquivo = fopen(diretorio, "r");
     if(arquivo == NULL){
-        printf("ERRO: nao foi possivel abrir o arquivo\n");
-        exit(0);
+        printf("ERRO: nao foi possivel abrir arquivo CSV: %s.\n", diretorio);
+        exit(-1);
     }
 
     int **matriz = criaMatrizInt(tam);

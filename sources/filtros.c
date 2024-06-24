@@ -98,7 +98,6 @@ float verificaSemelhanca(float * imagemBase, float * imagem, int tamanho){
     float soma = 0;
     for(int i = 0; i < tamanho; i++){
         if(imagemBase[i] == 1.0){
-            //printf("(%d)\t\t%.2f > 0,7 --> %.2f\n",i,imagemBase[i], imagem[i]);
             soma += imagem[i];
             cont++;
         }
@@ -202,8 +201,6 @@ void classificaImagem(int ** imagem){
     float * vector2 = propagacaoDireta(imagem, filtro2);
     float * vector3 = propagacaoDireta(imagem, filtro3);
     float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
-    //imprimeVetorFloat(vector,12);
-    //printf("\n");
 
     destroiMatriz(filtro1, TAMANHO_FILTRO);
     destroiMatriz(filtro2, TAMANHO_FILTRO);
@@ -215,6 +212,7 @@ void classificaImagem(int ** imagem){
 
     FILE * vetorArquivoX = fopen(TRAIN_X_PATH, "r");
     if(vetorArquivoX == NULL){
+        printf("ERRO: nao foi possivel abrir o TRAIN_O_PATH.\n");
         exit(-1);
     }
 
@@ -225,10 +223,7 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoX)){
         fgets(linha, 1024, vetorArquivoX);
         float * vectorX = abreVetorArquivo(linha, 12);
-        //imprimeVetorFloat(vectorX, 12);
-
         somaSemelhanca += verificaSemelhanca(vectorX, vector,12);
-        //printf("ACUMULADO: %.2f\n", somaSemelhanca);
         cont++;
         free(vectorX);
     }
@@ -248,8 +243,6 @@ void classificaImagem(int ** imagem){
     vector2 = propagacaoDireta(imagem, filtro5);
     vector3 = propagacaoDireta(imagem, filtro6);
     vector = juntaTresFiltros(vector1, vector2, vector3, 4);
-    //imprimeVetorFloat(vector,12);
-    //printf("\n");
 
     destroiMatriz(filtro4, TAMANHO_FILTRO);
     destroiMatriz(filtro5, TAMANHO_FILTRO);
@@ -261,6 +254,7 @@ void classificaImagem(int ** imagem){
 
     FILE * vetorArquivoO = fopen(TRAIN_O_PATH, "r");
     if(vetorArquivoO == NULL){
+        printf("ERRO: nao foi possivel abrir o TRAIN_O_PATH.\n");
         exit(-1);
     }
 

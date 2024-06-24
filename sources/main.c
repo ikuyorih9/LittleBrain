@@ -24,27 +24,27 @@
 
 
 int main(){
-    printf("Hello world!\n");
-
     int ** imagemTesteX1 = instaciaMatrizCSV(TESTX1, TAMANHO_IMAGEM);
     int ** imagemTesteX2 = instaciaMatrizCSV(TESTX2, TAMANHO_IMAGEM);
-    int ** imagemTesteO1 = instaciaMatrizCSV(TESTO1, TAMANHO_IMAGEM);
-    int ** imagemTesteO2 = instaciaMatrizCSV(TESTO2, TAMANHO_IMAGEM);
-
+    
     printf("Testando imagem X1 de teste...\n");
     classificaImagem(imagemTesteX1);
 
     printf("Testando imagem X2 de teste...\n");
     classificaImagem(imagemTesteX2);
 
+    destroiMatriz(imagemTesteX1, TAMANHO_IMAGEM);
+    destroiMatriz(imagemTesteX2, TAMANHO_IMAGEM);
+    
+    int ** imagemTesteO1 = instaciaMatrizCSV(TESTO1, TAMANHO_IMAGEM);
+    int ** imagemTesteO2 = instaciaMatrizCSV(TESTO2, TAMANHO_IMAGEM);
+
     printf("Testando imagem O1 de teste...\n");
     classificaImagem(imagemTesteO1);
 
     printf("Testando imagem O1 de teste...\n");
     classificaImagem(imagemTesteO2);
-
-    destroiMatriz(imagemTesteX1, TAMANHO_IMAGEM);
-    destroiMatriz(imagemTesteX2, TAMANHO_IMAGEM);
+    
     destroiMatriz(imagemTesteO1, TAMANHO_IMAGEM);
     destroiMatriz(imagemTesteO2, TAMANHO_IMAGEM);
 
