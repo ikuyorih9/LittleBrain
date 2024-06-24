@@ -9,10 +9,12 @@ float ** criaMatrizFloat(int tamanho);
 int ** criaJanela(int ** matriz, int tam, int i, int j);
 
 void destroiMatriz(int ** matriz, int tam);
-void destroiMatrizFloat(float ** matriz, int tam);
+void destroiMatrizFloat(float *** matriz, int tam);
 
 void imprimeMatriz(int ** matriz, int tamanho);
 void imprimeMatrizFloat(float ** matriz, int tamanho);
+float *** criaMatrizFloat2(int tamanho);
 void instanciaMatrizZero(int ** matriz, int tamanho);
 int ** instaciaMatrizCSV(const char * diretorio, int tam);
+void imprimeVetorFloat(float * vetor, int tam);
 #endif

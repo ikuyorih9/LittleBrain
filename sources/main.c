@@ -4,61 +4,52 @@
 #include "filtros.h"
 #include "matrix.h"
 
-#define IMAGE_X_PATH "./images/x.csv"
-#define IMAGE_O_PATH "./images/o.csv"
-#define FILTRO_1_PATH "./filters/filtro1.csv"
-#define FILTRO_2_PATH "./filters/filtro2.csv"
-#define FILTRO_3_PATH "./filters/filtro3.csv"
+#define TESTX1 "./images/train/trainX_1.csv"
+#define TESTX2 "./images/train/trainX_2.csv"
+#define TESTX3 "./images/train/trainX_3.csv"
+#define TESTX4 "./images/train/trainX_4.csv"
+#define TESTX5 "./images/train/trainX_5.csv"
+#define TESTO "./images/train/trainO_1.csv"
+
+
 
 int main(){
     printf("Hello world!\n");
 
-    int ** imagemX = instaciaMatrizCSV(IMAGE_X_PATH, TAMANHO_IMAGEM);
-    imprimeMatriz(imagemX, TAMANHO_IMAGEM);
+    int ** imagemTesteX1 = instaciaMatrizCSV(TESTX1, TAMANHO_IMAGEM);
+    int ** imagemTesteX2 = instaciaMatrizCSV(TESTX2, TAMANHO_IMAGEM);
+    int ** imagemTesteX3 = instaciaMatrizCSV(TESTX3, TAMANHO_IMAGEM);
+    int ** imagemTesteX4 = instaciaMatrizCSV(TESTX4, TAMANHO_IMAGEM);
+    int ** imagemTesteX5 = instaciaMatrizCSV(TESTX5, TAMANHO_IMAGEM);
+    int ** imagemTesteO = instaciaMatrizCSV(TESTO, TAMANHO_IMAGEM);
 
-    int ** filtro1 = instaciaMatrizCSV(FILTRO_1_PATH, TAMANHO_FILTRO);
-    int ** filtro2 = instaciaMatrizCSV(FILTRO_2_PATH, TAMANHO_FILTRO);
-    int ** filtro3 = instaciaMatrizCSV(FILTRO_3_PATH, TAMANHO_FILTRO);
+    // printf("Testando imagem X1 de teste...\n");
+    // classificaImagem(imagemTesteX);
 
-    // int ** janela = criaJanela(imagemX, 3, 0, 0);
-    // imprimeMatriz(janela, 3);
+    // printf("Testando imagem X2 de teste...\n");
+    // classificaImagem(imagemTesteX2);
 
-    // int num = produtoEscalar(janela, filtro1, 3);
-    // printf("num = %d\n", num);
+    // printf("Testando imagem X3 de teste...\n");
+    // classificaImagem(imagemTesteX3);
+
+    // printf("Testando imagem X4 de teste...\n");
+    // classificaImagem(imagemTesteX4);
+
+    // printf("Testando imagem O de teste...\n");
+    // classificaImagem(imagemTesteO);
+
+    treina(imagemTesteX1);
+    treina(imagemTesteX2);
+    treina(imagemTesteX3);
+    treina(imagemTesteX4);
+    treina(imagemTesteX5);
 
 
+    destroiMatriz(imagemTesteX1, TAMANHO_IMAGEM);
+    destroiMatriz(imagemTesteX2, TAMANHO_IMAGEM);
+    destroiMatriz(imagemTesteX3, TAMANHO_IMAGEM);
+    destroiMatriz(imagemTesteX4, TAMANHO_IMAGEM);
+    destroiMatriz(imagemTesteO, TAMANHO_IMAGEM);
 
-    // destroiMatriz(imagemX, TAMANHO_IMAGEM);
-    // destroiMatriz(janela, 3);
-
-    printf("\n");
-
-    float ** featureMap = convolucao(imagemX, filtro1);
-    imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
-
-    printf("\n");
-
-    reLu(featureMap);
-    imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
-
-    printf("\n");
-
-    pooling(featureMap);
-    imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
-
-    printf("\n");
-
-    for(int i = 0; i < TAMANHO_MAP; i+=2){
-        for(int j = 0; j < TAMANHO_MAP; j+=2){
-            printf("%.2f ", featureMap[i][j]);
-        }
-        printf("\n");
-    }
-
-    destroiMatriz(imagemX, TAMANHO_IMAGEM);
-    destroiMatriz(filtro1, TAMANHO_FILTRO);
-    destroiMatriz(filtro2, TAMANHO_FILTRO);
-    destroiMatriz(filtro3, TAMANHO_FILTRO);
-    destroiMatrizFloat(featureMap, TAMANHO_MAP);
     return 0;
 }

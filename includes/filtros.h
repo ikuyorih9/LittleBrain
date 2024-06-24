@@ -7,8 +7,20 @@
 #define TAMANHO_FILTRO 3
 #define TAMANHO_MAP (TAMANHO_IMAGEM - 2)
 
+#define IMAGE_O_PATH "./images/o.csv"
+#define FILTRO_1_PATH "./filters/filtro1.csv"
+#define FILTRO_2_PATH "./filters/filtro2.csv"
+#define FILTRO_3_PATH "./filters/filtro3.csv"
+
+float * propagacaoDireta(int ** imagem, int ** filtro);
 float ** convolucao(int ** imagem, int ** filtro);
 void reLu(float ** featureMap);
-void pooling(float ** featureMap);
+int pooling(float *** featureMap, int tamanho);
+float * flattening(float ** pooledMap, int tamanho);
+float verificaSemelhanca(float * imagemBase, float * imagem, int tamanho);
+float * juntaTresFiltros(float * vector1, float * vector2, float * vector3, int tamanho);
 int produtoEscalarFiltro(int ** janela, int ** filtro);
+void classificaImagem(int ** imagem);
+float * abreVetorArquivo(char * linha, int tamanho);
+void treina(int ** imagem);
 #endif

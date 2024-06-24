@@ -12,6 +12,14 @@ EXECUTABLE=$(BINDIR)/programa
 
 all: $(BINDIR) $(EXECUTABLE) run
 
+hugo: compile roda
+
+roda:
+	./bin/programa
+
+compile:
+	gcc -I./includes -o ./bin/programa ./sources/main.c ./sources/filtros.c ./sources/matrix.c
+
 $(BINDIR):
 	mkdir -p $(BINDIR)
 

@@ -9,6 +9,8 @@
         "matrix.h": "c",
         "string.h": "c",
         "stdio.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "type_traits": "c",
+        "filtros.h": "c"
     } // Salva automaticamente após 1 segundo de inatividade
 }

@@ -4,6 +4,43 @@
 // const int filtro2[TAMANHO_FILTRO][TAMANHO_FILTRO] = {{1,-1,1},{-1,1,-1},{1,-1,1}};
 // const int filtro3[TAMANHO_FILTRO][TAMANHO_FILTRO] = {{-1,-1,1},{-1,1,-1},{1,-1,-1}};
 
+float * propagacaoDireta(int ** imagem, int ** filtro){
+    int tamanho = TAMANHO_MAP;
+    
+    //printf("CONVOLUCAO:\n");
+    float ** featureMap = convolucao(imagem, filtro);
+    //imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
+
+    //printf("\n");
+
+    //printf("RELU\n");
+    reLu(featureMap);
+    //imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
+
+    //printf("\n");
+
+    //printf("POOLING (1):\n");
+    tamanho = pooling(&featureMap, TAMANHO_MAP);
+    //imprimeMatrizFloat(featureMap, tamanho);
+    
+    //printf("\n");
+
+    //printf("POOLING (2):\n");
+    tamanho = pooling(&featureMap, tamanho);
+    //imprimeMatrizFloat(featureMap, tamanho);
+
+    //printf("\n");
+
+    //printf("FLATTENING\n");
+    float * vector = flattening(featureMap, tamanho);
+    // for(int i = 0; i < tamanho*tamanho; i++){
+    //     printf("%.2f ", vector[i]);
+    // }
+    // printf("\n");
+
+    return vector;
+}
+
 float ** convolucao(int ** imagem, int **filtro){
     float ** featureMap = criaMatrizFloat(TAMANHO_MAP);
 
@@ -26,22 +63,50 @@ void reLu(float ** featureMap){
     }
 }
 
-void pooling(float ** featureMap){
-    for(int x = 0; x < TAMANHO_MAP; x+=2){
-        for(int j = 0; j < TAMANHO_MAP; j++){
-            if(x+1 < TAMANHO_MAP && featureMap[x][j] < featureMap[x+1][j])
-                featureMap[x][j] = featureMap[x+1][j];
+int pooling(float *** featureMap, int tamanho){
+    for(int x = 0; x < tamanho; x+=2){
+        for(int j = 0; j < tamanho; j++){
+            if(x+1 < tamanho && (*featureMap)[x][j] < (*featureMap)[x+1][j]){
+                (*featureMap)[x][j] = (*featureMap)[x+1][j];
+                (*featureMap)[x+1][j] = 0;
+            }
         }
     }
 
-    for(int y = 0; y < TAMANHO_MAP; y+=2){
-        for(int i = 0; i < TAMANHO_MAP; i++){
-            if(y+1 < TAMANHO_MAP && featureMap[i][y] < featureMap[i][y+1])
-                featureMap[i][y] = featureMap[i][y+1];
+    for(int y = 0; y < tamanho; y+=2){
+        for(int i = 0; i < tamanho; i++){
+            if(y+1 < tamanho && (*featureMap)[i][y] < (*featureMap)[i][y+1]){
+                (*featureMap)[i][y] = ((*featureMap))[i][y+1];
+                (*featureMap)[i][y+1] = 0;
+            }
         }
     }
 
+    int tamanhoPooledMap = tamanho/2 + (tamanho%2);
+
+    float ** pooledMap = criaMatrizFloat(tamanhoPooledMap);
+
+    for(int i = 0, x = 0; i < tamanho; i+=2, x++){
+        for(int j = 0, y = 0; j < tamanho; j+=2, y++){
+            (pooledMap)[x][y] = (*featureMap)[i][j];
+        }
+    }
+    destroiMatrizFloat(featureMap, tamanho);
+    *featureMap = pooledMap;
+    return tamanhoPooledMap;
 }
+
+float * flattening(float ** pooledMap, int tamanho){
+    float * vector = (float*) malloc(sizeof(tamanho * tamanho));
+    for(int i = 0; i < tamanho; i++){
+        for(int j = 0; j < tamanho; j++){
+            vector[i*tamanho + j] = pooledMap[i][j];
+        }
+    }
+    destroiMatrizFloat(&pooledMap, tamanho);
+    return vector;
+}
+
 
 int produtoEscalarFiltro(int ** janela, int ** filtro){
     int produto = 0;
@@ -51,4 +116,158 @@ int produtoEscalarFiltro(int ** janela, int ** filtro){
         }
     }
     return produto;
+}
+
+float verificaSemelhanca(float * imagemBase, float * imagem, int tamanho){
+    int cont = 0;
+    float soma = 0;
+    for(int i = 0; i < tamanho; i++){
+        if(imagemBase[i] > 0.7){
+            soma += imagem[i];
+            cont++;
+        }
+    }
+
+    float porcentagem = 0.0;
+    if(cont != 0)
+        porcentagem = soma/cont;
+
+    return porcentagem;
+}
+
+float * juntaTresFiltros(float * vector1, float * vector2, float * vector3, int tamanho){
+    float * vector = (float*)malloc(3*tamanho*sizeof(float));
+    if(vector == NULL){
+        printf("Erro ao alocar vetor!\n");
+        exit(-1);
+    }
+
+    for(int i = 0; i < tamanho; i++){
+        vector[i] = vector1[i];
+        vector[tamanho +i] = vector2[i];
+        vector[2*tamanho + i] = vector3[i];
+    }
+    return vector;
+}
+
+float * abreVetorArquivo(char * linha, int tamanho){
+    float * vector = (float*) malloc(tamanho * sizeof(float));
+    int i = 0;
+    int x = 0;
+    int stopFor = 0;
+    char valor[8];
+    for(int pos = 0; !stopFor; pos++){
+        if(linha[pos] == ' '){
+            vector[x] = atof(valor);
+            i = 0;
+            x++;
+        }
+        else if(linha[pos] == '\0' || linha[pos] == '\n'){
+            vector[x] = atof(valor);
+            stopFor = 1;
+        }
+        else{
+            valor[i] = linha[pos];
+            valor[i+1] = '\0';
+            i++;
+        }
+    }
+    return vector;
+}
+
+void treina(int ** imagem){
+    int ** filtro1 = instaciaMatrizCSV(FILTRO_1_PATH, TAMANHO_FILTRO);
+    int ** filtro2 = instaciaMatrizCSV(FILTRO_2_PATH, TAMANHO_FILTRO);
+    int ** filtro3 = instaciaMatrizCSV(FILTRO_3_PATH, TAMANHO_FILTRO);
+
+    float * vector1 = propagacaoDireta(imagem, filtro1);
+    float * vector2 = propagacaoDireta(imagem, filtro2);
+    float * vector3 = propagacaoDireta(imagem, filtro3);
+    float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
+
+    imprimeVetorFloat(vector, 12);
+
+    free(vector1);
+    free(vector2);
+    free(vector3);
+    free(vector);
+    destroiMatriz(filtro1, TAMANHO_FILTRO);
+    destroiMatriz(filtro2, TAMANHO_FILTRO);
+    destroiMatriz(filtro3, TAMANHO_FILTRO);
+}
+
+void classificaImagem(int ** imagem){
+    int ** filtro1 = instaciaMatrizCSV(FILTRO_1_PATH, TAMANHO_FILTRO);
+    int ** filtro2 = instaciaMatrizCSV(FILTRO_2_PATH, TAMANHO_FILTRO);
+    int ** filtro3 = instaciaMatrizCSV(FILTRO_3_PATH, TAMANHO_FILTRO);
+
+    float * vector1 = propagacaoDireta(imagem, filtro1);
+    float * vector2 = propagacaoDireta(imagem, filtro2);
+    float * vector3 = propagacaoDireta(imagem, filtro3);
+    float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
+
+    destroiMatriz(filtro1, TAMANHO_FILTRO);
+    destroiMatriz(filtro2, TAMANHO_FILTRO);
+    destroiMatriz(filtro3, TAMANHO_FILTRO);
+
+    free(vector1);
+    free(vector2);
+    free(vector3);
+    free(vector);
+
+    FILE * vetorArquivoX = fopen("treinamentoX.txt", "r");
+    if(vetorArquivoX == NULL){
+        exit(-1);
+    }
+
+    float somaSemelhanca = 0;
+    int cont = 0;
+
+    char linha[1024];
+    while(!feof(vetorArquivoX)){
+        fgets(linha, 1024, vetorArquivoX);
+        float * vectorX = abreVetorArquivo(linha, 12);
+        imprimeVetorFloat(vectorX,12);
+        somaSemelhanca += verificaSemelhanca(vectorX, vector,12);
+        printf("(%.2f)", somaSemelhanca);
+        cont++;
+        free(vectorX);
+    }
+
+    float semelhancaX = somaSemelhanca/cont;
+    printf("\nX: %.2f\n", semelhancaX);
+
+    somaSemelhanca = 0;
+    cont = 0;
+
+    FILE * vetorArquivoO = fopen("treinamentoO.txt", "r");
+    if(vetorArquivoO == NULL){
+        exit(-1);
+    }
+
+    while(!feof(vetorArquivoO)){
+        fgets(linha, 1024, vetorArquivoO);
+        float * vectorO = abreVetorArquivo(linha, 12);
+        imprimeVetorFloat(vectorO,12);
+        somaSemelhanca += verificaSemelhanca(vectorO, vector,12);
+        cont++;
+        free(vectorO);
+    }
+
+    float semelhancaO = somaSemelhanca/cont;
+    printf("O: %.2f\n", semelhancaO);
+
+    if(semelhancaX > semelhancaO){
+        printf("A imagem de entrada é um X\n");
+    }
+    else if(semelhancaX < semelhancaO){
+        printf("A imagem de entrada é um O\n");
+    }
+    else{
+        printf("A imagem de entrada é um XO\n");
+    }
+
+    fclose(vetorArquivoX);
+    fclose(vetorArquivoO);
+
 }

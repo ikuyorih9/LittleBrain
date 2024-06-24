@@ -16,6 +16,15 @@ float ** criaMatrizFloat(int tamanho){
     return matriz;
 }
 
+float *** criaMatrizFloat2(int tamanho){
+    float *** matriz = (float ***) malloc(sizeof(float**));
+    (matriz)[0] = (float**) malloc(tamanho * sizeof(float*));
+    for(int i = 0; i < tamanho; i++){
+        (*matriz)[i] = (float *) malloc(tamanho * sizeof(float));
+    }
+    return matriz;
+}
+
 int ** criaJanela(int ** matriz, int tam, int i, int j){
     int ** janela = criaMatrizInt(tam);
     for(int x = 0; x < tam; x++){
@@ -33,11 +42,14 @@ void destroiMatriz(int ** matriz, int tam) {
     free(matriz);
 }
 
-void destroiMatrizFloat(float ** matriz, int tam) {
+void destroiMatrizFloat(float *** matriz, int tam) {
+    if(matriz == NULL || *matriz == NULL)
+        return;
     for(int i = 0 ; i < tam; i++) {
-        free(matriz[i]);
+        free((*matriz)[i]);
     }
-    free(matriz);
+    free(*matriz);
+    *matriz = NULL;
 }
 
 void imprimeMatriz(int ** matriz, int tamanho){
@@ -50,6 +62,10 @@ void imprimeMatriz(int ** matriz, int tamanho){
 }
 
 void imprimeMatrizFloat(float ** matriz, int tamanho){
+    if(matriz == NULL || *matriz == NULL){
+        printf("Matriz esta desalocada.\n");
+        return;
+    }
     for(int i = 0; i < tamanho; i++){
         for(int j = 0; j < tamanho; j++){
             printf("%.2f ", matriz[i][j]);
@@ -88,4 +104,11 @@ int ** instaciaMatrizCSV(const char * diretorio, int tam){
     while(!feof(arquivo));
     fclose(arquivo);
     return matriz;
+}
+
+void imprimeVetorFloat(float * vetor, int tam){
+    for(int i = 0; i < tam; i++){
+        printf("%.2f ", vetor[i]);
+    }
+    printf("\n");
 }
