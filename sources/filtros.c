@@ -7,36 +7,15 @@
 float * propagacaoDireta(int ** imagem, int ** filtro){
     int tamanho = TAMANHO_MAP;
     
-    //printf("CONVOLUCAO:\n");
     float ** featureMap = convolucao(imagem, filtro);
-    //imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
 
-    //printf("\n");
-
-    //printf("RELU\n");
     reLu(featureMap);
-    //imprimeMatrizFloat(featureMap, TAMANHO_IMAGEM - 2);
 
-    //printf("\n");
-
-    //printf("POOLING (1):\n");
     tamanho = pooling(&featureMap, TAMANHO_MAP);
-    //imprimeMatrizFloat(featureMap, tamanho);
-    
-    //printf("\n");
 
-    //printf("POOLING (2):\n");
     tamanho = pooling(&featureMap, tamanho);
-    //imprimeMatrizFloat(featureMap, tamanho);
 
-    //printf("\n");
-
-    //printf("FLATTENING\n");
     float * vector = flattening(featureMap, tamanho);
-    // for(int i = 0; i < tamanho*tamanho; i++){
-    //     printf("%.2f ", vector[i]);
-    // }
-    // printf("\n");
 
     return vector;
 }
@@ -215,7 +194,7 @@ void classificaImagem(int ** imagem){
     free(vector3);
     free(vector);
 
-    FILE * vetorArquivoX = fopen("treinamentoX.txt", "r");
+    FILE * vetorArquivoX = fopen(TRAIN_X_PATH, "r");
     if(vetorArquivoX == NULL){
         exit(-1);
     }
@@ -227,20 +206,18 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoX)){
         fgets(linha, 1024, vetorArquivoX);
         float * vectorX = abreVetorArquivo(linha, 12);
-        imprimeVetorFloat(vectorX,12);
         somaSemelhanca += verificaSemelhanca(vectorX, vector,12);
-        printf("(%.2f)", somaSemelhanca);
         cont++;
         free(vectorX);
     }
 
     float semelhancaX = somaSemelhanca/cont;
-    printf("\nX: %.2f\n", semelhancaX);
+    printf("\tX: %.2f\n", semelhancaX);
 
     somaSemelhanca = 0;
     cont = 0;
 
-    FILE * vetorArquivoO = fopen("treinamentoO.txt", "r");
+    FILE * vetorArquivoO = fopen(TRAIN_O_PATH, "r");
     if(vetorArquivoO == NULL){
         exit(-1);
     }
@@ -248,23 +225,22 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoO)){
         fgets(linha, 1024, vetorArquivoO);
         float * vectorO = abreVetorArquivo(linha, 12);
-        imprimeVetorFloat(vectorO,12);
         somaSemelhanca += verificaSemelhanca(vectorO, vector,12);
         cont++;
         free(vectorO);
     }
 
     float semelhancaO = somaSemelhanca/cont;
-    printf("O: %.2f\n", semelhancaO);
+    printf("\tO: %.2f\n", semelhancaO);
 
     if(semelhancaX > semelhancaO){
-        printf("A imagem de entrada é um X\n");
+        printf("\tA imagem de entrada é um X\n\n");
     }
     else if(semelhancaX < semelhancaO){
-        printf("A imagem de entrada é um O\n");
+        printf("\tA imagem de entrada é um O\n\n");
     }
     else{
-        printf("A imagem de entrada é um XO\n");
+        printf("\tA imagem de entrada é um XO\n\n");
     }
 
     fclose(vetorArquivoX);

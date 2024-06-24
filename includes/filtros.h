@@ -7,10 +7,12 @@
 #define TAMANHO_FILTRO 3
 #define TAMANHO_MAP (TAMANHO_IMAGEM - 2)
 
-#define IMAGE_O_PATH "./images/o.csv"
 #define FILTRO_1_PATH "./filters/filtro1.csv"
 #define FILTRO_2_PATH "./filters/filtro2.csv"
 #define FILTRO_3_PATH "./filters/filtro3.csv"
+
+#define TRAIN_X_PATH "treinamentoX.txt"
+#define TRAIN_O_PATH "treinamentoO.txt"
 
 float * propagacaoDireta(int ** imagem, int ** filtro);
 float ** convolucao(int ** imagem, int ** filtro);
