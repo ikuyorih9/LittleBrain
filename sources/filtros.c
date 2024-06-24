@@ -1,8 +1,5 @@
 #include "filtros.h"
 
-// const int filtro1[TAMANHO_FILTRO][TAMANHO_FILTRO] = {{1,-1,-1},{-1,1,-1},{-1,-1,1}};
-// const int filtro2[TAMANHO_FILTRO][TAMANHO_FILTRO] = {{1,-1,1},{-1,1,-1},{1,-1,1}};
-// const int filtro3[TAMANHO_FILTRO][TAMANHO_FILTRO] = {{-1,-1,1},{-1,1,-1},{1,-1,-1}};
 
 float * propagacaoDireta(int ** imagem, int ** filtro){
     int tamanho = TAMANHO_MAP;
@@ -86,7 +83,6 @@ float * flattening(float ** pooledMap, int tamanho){
     return vector;
 }
 
-
 int produtoEscalarFiltro(int ** janela, int ** filtro){
     int produto = 0;
     for(int i = 0; i < TAMANHO_FILTRO; i++){
@@ -102,6 +98,7 @@ float verificaSemelhanca(float * imagemBase, float * imagem, int tamanho){
     float soma = 0;
     for(int i = 0; i < tamanho; i++){
         if(imagemBase[i] > 0.7){
+            //printf("(%d)\t\t%.2f > 0,7 --> %.2f\n",i,imagemBase[i], imagem[i]);
             soma += imagem[i];
             cont++;
         }
@@ -184,6 +181,8 @@ void classificaImagem(int ** imagem){
     float * vector2 = propagacaoDireta(imagem, filtro2);
     float * vector3 = propagacaoDireta(imagem, filtro3);
     float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
+    imprimeVetorFloat(vector,12);
+    printf("\n");
 
     destroiMatriz(filtro1, TAMANHO_FILTRO);
     destroiMatriz(filtro2, TAMANHO_FILTRO);
@@ -192,7 +191,6 @@ void classificaImagem(int ** imagem){
     free(vector1);
     free(vector2);
     free(vector3);
-    free(vector);
 
     FILE * vetorArquivoX = fopen(TRAIN_X_PATH, "r");
     if(vetorArquivoX == NULL){
@@ -206,7 +204,10 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoX)){
         fgets(linha, 1024, vetorArquivoX);
         float * vectorX = abreVetorArquivo(linha, 12);
+        imprimeVetorFloat(vectorX, 12);
+
         somaSemelhanca += verificaSemelhanca(vectorX, vector,12);
+        //printf("ACUMULADO: %.2f\n", somaSemelhanca);
         cont++;
         free(vectorX);
     }
@@ -225,6 +226,7 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoO)){
         fgets(linha, 1024, vetorArquivoO);
         float * vectorO = abreVetorArquivo(linha, 12);
+        imprimeVetorFloat(vectorO, 12);
         somaSemelhanca += verificaSemelhanca(vectorO, vector,12);
         cont++;
         free(vectorO);
