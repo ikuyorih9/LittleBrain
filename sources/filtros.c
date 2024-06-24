@@ -73,7 +73,7 @@ int pooling(float *** featureMap, int tamanho){
 }
 
 float * flattening(float ** pooledMap, int tamanho){
-    float * vector = (float*) malloc(sizeof(tamanho * tamanho));
+    float * vector = (float*) malloc((tamanho*tamanho)*sizeof(float));
     for(int i = 0; i < tamanho; i++){
         for(int j = 0; j < tamanho; j++){
             vector[i*tamanho + j] = pooledMap[i][j];
@@ -131,8 +131,9 @@ float * abreVetorArquivo(char * linha, int tamanho){
     int x = 0;
     int stopFor = 0;
     char valor[8];
-    for(int pos = 0; !stopFor; pos++){
+    for(int pos = 0; !stopFor && x < tamanho; pos++){
         if(linha[pos] == ' '){
+            //printf("%d\n", x);
             vector[x] = atof(valor);
             i = 0;
             x++;
@@ -261,11 +262,12 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoO)){
         fgets(linha, 1024, vetorArquivoO);
         float * vectorO = abreVetorArquivo(linha, 12);
-        //imprimeVetorFloat(vectorO, 12);
         somaSemelhanca += verificaSemelhanca(vectorO, vector,12);
         cont++;
         free(vectorO);
     }
+
+    free(vector);
 
     float semelhancaO = somaSemelhanca/cont;
     printf("\tO: %.2f\n", semelhancaO);

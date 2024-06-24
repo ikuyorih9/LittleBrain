@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I./includes
+CFLAGS=-I./includes -g3
 BINDIR=bin
 
 # Encontra todos os arquivos .c na pasta sources
