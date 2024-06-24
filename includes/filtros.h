@@ -11,6 +11,11 @@
 #define FILTRO_2_PATH "./filters/filtro2.csv"
 #define FILTRO_3_PATH "./filters/filtro3.csv"
 
+#define FILTRO_4_PATH "./filters/filtro4.csv"
+#define FILTRO_5_PATH "./filters/filtro5.csv"
+#define FILTRO_6_PATH "./filters/filtro6.csv"
+#define FILTRO_7_PATH "./filters/filtro7.csv"
+
 #define TRAIN_X_PATH "treinamentoX.txt"
 #define TRAIN_O_PATH "treinamentoO.txt"
 
@@ -24,5 +29,6 @@ float * juntaTresFiltros(float * vector1, float * vector2, float * vector3, int 
 int produtoEscalarFiltro(int ** janela, int ** filtro);
 void classificaImagem(int ** imagem);
 float * abreVetorArquivo(char * linha, int tamanho);
-void treina(int ** imagem);
+void treinaX(int ** imagem);
+void treinaO(int ** imagem);
 #endif

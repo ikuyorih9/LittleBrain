@@ -97,7 +97,7 @@ float verificaSemelhanca(float * imagemBase, float * imagem, int tamanho){
     int cont = 0;
     float soma = 0;
     for(int i = 0; i < tamanho; i++){
-        if(imagemBase[i] > 0.7){
+        if(imagemBase[i] == 1.0){
             //printf("(%d)\t\t%.2f > 0,7 --> %.2f\n",i,imagemBase[i], imagem[i]);
             soma += imagem[i];
             cont++;
@@ -151,10 +151,31 @@ float * abreVetorArquivo(char * linha, int tamanho){
     return vector;
 }
 
-void treina(int ** imagem){
+void treinaX(int ** imagem){
     int ** filtro1 = instaciaMatrizCSV(FILTRO_1_PATH, TAMANHO_FILTRO);
     int ** filtro2 = instaciaMatrizCSV(FILTRO_2_PATH, TAMANHO_FILTRO);
     int ** filtro3 = instaciaMatrizCSV(FILTRO_3_PATH, TAMANHO_FILTRO);
+
+    float * vector1 = propagacaoDireta(imagem, filtro1);
+    float * vector2 = propagacaoDireta(imagem, filtro2);
+    float * vector3 = propagacaoDireta(imagem, filtro3);
+    float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
+
+    imprimeVetorFloat(vector, 12);
+
+    free(vector1);
+    free(vector2);
+    free(vector3);
+    free(vector);
+    destroiMatriz(filtro1, TAMANHO_FILTRO);
+    destroiMatriz(filtro2, TAMANHO_FILTRO);
+    destroiMatriz(filtro3, TAMANHO_FILTRO);
+}
+
+void treinaO(int ** imagem){
+    int ** filtro1 = instaciaMatrizCSV(FILTRO_4_PATH, TAMANHO_FILTRO);
+    int ** filtro2 = instaciaMatrizCSV(FILTRO_5_PATH, TAMANHO_FILTRO);
+    int ** filtro3 = instaciaMatrizCSV(FILTRO_6_PATH, TAMANHO_FILTRO);
 
     float * vector1 = propagacaoDireta(imagem, filtro1);
     float * vector2 = propagacaoDireta(imagem, filtro2);
@@ -181,8 +202,8 @@ void classificaImagem(int ** imagem){
     float * vector2 = propagacaoDireta(imagem, filtro2);
     float * vector3 = propagacaoDireta(imagem, filtro3);
     float * vector = juntaTresFiltros(vector1, vector2, vector3, 4);
-    imprimeVetorFloat(vector,12);
-    printf("\n");
+    //imprimeVetorFloat(vector,12);
+    //printf("\n");
 
     destroiMatriz(filtro1, TAMANHO_FILTRO);
     destroiMatriz(filtro2, TAMANHO_FILTRO);
@@ -204,7 +225,7 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoX)){
         fgets(linha, 1024, vetorArquivoX);
         float * vectorX = abreVetorArquivo(linha, 12);
-        imprimeVetorFloat(vectorX, 12);
+        //imprimeVetorFloat(vectorX, 12);
 
         somaSemelhanca += verificaSemelhanca(vectorX, vector,12);
         //printf("ACUMULADO: %.2f\n", somaSemelhanca);
@@ -215,8 +236,28 @@ void classificaImagem(int ** imagem){
     float semelhancaX = somaSemelhanca/cont;
     printf("\tX: %.2f\n", semelhancaX);
 
+    free(vector);
     somaSemelhanca = 0;
     cont = 0;
+
+    int ** filtro4 = instaciaMatrizCSV(FILTRO_4_PATH, TAMANHO_FILTRO);
+    int ** filtro5 = instaciaMatrizCSV(FILTRO_5_PATH, TAMANHO_FILTRO);
+    int ** filtro6 = instaciaMatrizCSV(FILTRO_6_PATH, TAMANHO_FILTRO);
+
+    vector1 = propagacaoDireta(imagem, filtro4);
+    vector2 = propagacaoDireta(imagem, filtro5);
+    vector3 = propagacaoDireta(imagem, filtro6);
+    vector = juntaTresFiltros(vector1, vector2, vector3, 4);
+    //imprimeVetorFloat(vector,12);
+    //printf("\n");
+
+    destroiMatriz(filtro4, TAMANHO_FILTRO);
+    destroiMatriz(filtro5, TAMANHO_FILTRO);
+    destroiMatriz(filtro6, TAMANHO_FILTRO);
+
+    free(vector1);
+    free(vector2);
+    free(vector3);
 
     FILE * vetorArquivoO = fopen(TRAIN_O_PATH, "r");
     if(vetorArquivoO == NULL){
@@ -226,7 +267,7 @@ void classificaImagem(int ** imagem){
     while(!feof(vetorArquivoO)){
         fgets(linha, 1024, vetorArquivoO);
         float * vectorO = abreVetorArquivo(linha, 12);
-        imprimeVetorFloat(vectorO, 12);
+        //imprimeVetorFloat(vectorO, 12);
         somaSemelhanca += verificaSemelhanca(vectorO, vector,12);
         cont++;
         free(vectorO);
